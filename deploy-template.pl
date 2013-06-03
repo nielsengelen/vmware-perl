@@ -1,4 +1,11 @@
 #!/usr/bin/perl -w
+# Deploy a VM from template with some standard parameters 
+# Modify the default config value to the correct parameters
+# 
+# Feel free to use and/or edit 
+#
+# Initial version: 2013 - Niels Engelen
+
 use strict;
 use warnings;
 use POSIX qw(ceil floor);
@@ -8,7 +15,7 @@ use VMware::VILib;
 # Ignore SSL warnings or invalid server warning
 $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
 
-# Default VPS config
+# Default VM config
 my $cpus = 1;
 my $memory = 1024;
 my $sourcevm = 'templatename';
