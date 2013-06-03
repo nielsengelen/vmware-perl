@@ -1,2 +1,1 @@
-vmware-perl
-===========
+Random vSphere SDK for Perl scripts
