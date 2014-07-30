@@ -171,6 +171,7 @@ sub get_datastore {
                                 last;
                         }
                 }
+        }
         # No datatstore name specified
         else {
                 my $disksize = 0;
