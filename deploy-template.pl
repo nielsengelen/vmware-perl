@@ -1,8 +1,8 @@
 #!/usr/bin/perl -w
-# Deploy a VM from template with some standard parameters 
+# Deploy a VM from template with some standard parameters
 # Modify the default config value to the correct parameters
-# 
-# Feel free to use and/or edit 
+#
+# Feel free to use and/or edit
 #
 # Initial version: 2013 - Niels Engelen
 
@@ -25,9 +25,7 @@ my $pass = 'pass';
 my $vcenter = 'vcenter.domain.com';
 
 # vCenter login for deployments
-my $username = Opts::set_option ('username',$user);
-my $password = Opts::set_option ('password',$pass);
-my $url = Opts::set_option ('url',"https://$vcenter/sdk/webService");
+
 
 # Changeable options
 my %opts = (
@@ -80,10 +78,17 @@ my $vmname = Opts::get_option('vmname');
 sub deploy_template() {
         my ($sourcevm, $datastore, $resourcepool, $cpus, $folder, $comp_res_view, $vm_views);
 
+        if (Opts::get_option('server')) { $vcenter = Opts::get_option('vcenter'); }
+        if (Opts::get_option('pass')) { $pass = Opts::get_option('pass'); }
+        if (Opts::get_option('user')) { $user = Opts::get_option('user'); }
         if (Opts::get_option('datastore')) { $datastore = Opts::get_option('datastore'); }
         if (Opts::get_option('sourcevm')) { $sourcevm = Opts::get_option('sourcevm'); }
         if (Opts::get_option('vmhost')) { $vmhost = Opts::get_option('vmhost'); }
         if (Opts::get_option('cpus')) { $cpus = Opts::get_option('cpus'); }
+
+        my $username = Opts::set_option ('username',$user);
+        my $password = Opts::set_option ('password',$pass);
+        my $url = Opts::set_option ('url',"https://$vcenter/sdk/webService");
 
         $vm_views = Vim::find_entity_views( view_type => 'VirtualMachine', filter => { 'name' => $sourcevm } );
 
@@ -171,6 +176,7 @@ sub get_datastore {
                                 last;
                         }
                 }
+        }
         # No datatstore name specified
         else {
                 my $disksize = 0;
@@ -196,6 +202,7 @@ sub get_datastore {
 
         return ( name => $name, mor => $mor );
 }
+
 
 Util::connect();
 
