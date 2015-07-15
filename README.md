@@ -1,9 +1,13 @@
-# vmclone
+# vmware-perl scripts
 
 ## Table of Contents
 
 * [Installation](#installation)
   * [OSX](#osx)
+  * [Ubuntu](#ubuntu)
+* [Testing Installation](#testing)
+* [Usage](#usage-example)
+* [References](#references)
 
 ## Installation
 
@@ -19,8 +23,6 @@ cd vmware-vsphere-cli-distrib/
 #### Perl dependencies
 
 * **Alternative 1** - UUID 0.02 + force SDK to use this version (**RECOMMENDED**)
-
-_THS NEEDS TO BE CHECKED IN A BRAND NEW YOSEMITE INSTALL OF OSX_
 
 ```bash
 sudo cpan Class::MethodMaker Crypt::SSLeay SOAP::Lite UUID LWP XML::LibXML Data::Dumper
@@ -77,7 +79,7 @@ sudo perl vmware-install.pl
 
 Go grab a coffee while CPAN does its thing.
 
-## Testing
+## Testing Installation
 
 _When running from the command line, set the enviroment variable to ignore trusted cert.
 Make sure you know what this means!_
@@ -89,21 +91,22 @@ _Or pass the root CA file path via PERL_LWP_SSL_CA_PATH:_
 $ export PERL_LWP_SSL_CA_PATH=/path/to/ca/certs
 ```
 
-List
+
 ```bash
 vicfg-vmknic --server=$VCENTER__IP --username=$USER@vsphere.local --vihost=$VHOST --list
 ```
 
-## Usage
+## Usage example
 
 ```bash
-$ perl vmclone2.pl --customize_guest yes \
---username "username@vsphere.local" \
---password $PASSWORD \
---vmhost $VM_HOST \
---vmname $VM_TEMPLATE_NAME \
---vmname_destination $NEW_VM_NAME \
---url https://$VCENTER_IP/sdk/vimService \
---filename ../sampledata/vmclone.xml \
---schema ../schema/vmclone.xsd
+perl deploy-template.pl \
+--server <VCENTER_IP> \
+--username "user@vsphere.local" \
+--password <password> \
+--vmtemplate <VM_TEMPLATE_NAME> \
+--vmhost <TARGET_ESX_HOST> \
+--datastore <TARGET_DISKARRAY> \
+--vmname <NEW_VM_NAME> \
+--cpus 8 \
+--memory 32768
 ```
