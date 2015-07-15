@@ -2,8 +2,8 @@
 
 ## Table of Contents
 
-* [Installation](#Installation)
-  * [OSX](#OSX)
+* [Installation](#installation)
+  * [OSX](#osx)
 
 ## Installation
 
