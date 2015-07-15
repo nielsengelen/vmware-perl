@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+
+
+<!-- This is a sample xml file for creating a virtual machine clone
+Following default values of the tags are set
+
+Customication Spec Tags
+Auto-Logon              1
+Virtual-Machine-Name    TestVM
+Timezone                140
+Domain-User-Name        username
+Domain-User-Password    password
+Full-Name               admin
+Orgnization-Name        companyname
+
+Virtual Machine Spec Tags
+
+Guest-Id             winXPProGuest
+Disksize(in KB)      4194304(4GB)
+Memory(in MB)        256
+Number-of-Processor  1
+
+These values can be changed according to the requirement and network
+
+For timezone, check: https://technet.microsoft.com/en-us/library/aa226764(v=sql.80).aspx
+
+-->
+
+<Specification>
+   <Customization-Spec>
+    <Cust-Type>lin</Cust-Type>
+	  <Auto-Logon>1</Auto-Logon>
+	  <Virtual-Machine-Name>testlin</Virtual-Machine-Name>
+    <Timezone>100</Timezone>
+	  <Domain>VMWARE</Domain>
+	  <Domain-User-Name>Administrator</Domain-User-Name>
+	  <Domain-User-Password>secret</Domain-User-Password>
+	  <Full-Name>VMware</Full-Name>
+	  <AutoMode>perServer</AutoMode>
+	  <AutoUsers>5</AutoUsers>
+	  <Orgnization-Name>VMware</Orgnization-Name>
+	  <ProductId>XXXX-XXXX-XXXX-XXXX-XXXX</ProductId>
+	  <IP0>192.168.0.16</IP0>
+	  <IP0Gateway>192.168.0.1</IP0Gateway>
+	  <IP0dnsServers>192.168.0.43:192.168.0.1</IP0dnsServers>
+	  <IP0Subnet>255.255.255.0</IP0Subnet>
+	  <IP0dnsDomain>calls.local</IP0dnsDomain>
+	  <IP0primaryWINS>192.168.0.43</IP0primaryWINS>
+	  <IP0secondaryWINS></IP0secondaryWINS>
+   </Customization-Spec>
+ <Virtual-Machine-Spec>
+      <Guest-Id>winXPProGuest</Guest-Id>
+      <Memory>256</Memory>
+      <Disksize>4194304</Disksize>
+      <Number-of-CPUS>1</Number-of-CPUS>
+  </Virtual-Machine-Spec>
+</Specification>

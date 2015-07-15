@@ -2,14 +2,14 @@
 
 ## Table of Contents
 
-* [Installation](#installation)
+* [Installation](#vmware-sdk-installation)
   * [OSX](#osx)
   * [Ubuntu](#ubuntu)
 * [Testing Installation](#testing)
 * [Usage](#usage-example)
 * [References](#references)
 
-## Installation
+## VMWare SDK Installation
 
 ### OSX
 
