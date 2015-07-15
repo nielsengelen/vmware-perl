@@ -6,6 +6,19 @@
 #
 # Initial version: 2013 - Niels Engelen
 
+# Vmhost
+# perl deploy-template.pl \
+#--server <VCENTER_IP> \
+#--username "user@vsphere.local" \
+#--password <password> \
+#--vmtemplate <VM_TEMPLATE_NAME> \
+#--vmhost <TARGET_ESX_HOST> \
+#--datastore <TARGET_DISKARRAY> \
+#--vmname <NEW_VM_NAME> \
+#--cpus 8 \
+#--memory 32768
+
+
 use strict;
 use warnings;
 use POSIX qw(ceil floor);
@@ -23,14 +36,6 @@ $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
 # Default VM config
 my $cpus = 1;
 my $memory = 1024;
-my $vmtemplate = 'templatename';
-my $vmhost = 'esxi-host';
-my $user = 'user';
-my $pass = 'pass';
-my $vcenter = 'vcenter.domain.com';
-
-# vCenter login for deployments
-
 
 # Changeable options
 my %opts = (
@@ -38,12 +43,13 @@ my %opts = (
                 type => "=s",
                 help => "ESXi Host in cluster to deploy VM to",
                 required => 1,
+                default => "esxi-host",
         },
         vmtemplate => {
                 type => "=s",
                 help => "Name of VM Template (source VM)",
                 required => 1,
-                default => $vmtemplate,
+                default => "vmMachineTemplate",
         },
         vmname => {
                 type => "=s",
@@ -57,7 +63,7 @@ my %opts = (
         },
         folder => {
                 type => "=s",
-                help => "Folder where to deploy the new VM",
+                help => "Folder where to deploy the new VM. If not defined, the value is the same folder as the template",
                 required => 0,
         },
         memory => {
@@ -72,38 +78,33 @@ my %opts = (
                 required => 0,
                 default => $cpus,
         },
-        filename => {
+        xml_file => {
                 type => "=s",
                 help => "The name of the configuration specification file",
                 required => 0,
-                default => "vmclone.xml",
+                default => "sampledata/vmclone.xml",
         },
-        schema => {
+        xml_schema => {
                 type => "=s",
                 help => "The name of the schema file",
                 required => 0,
-                default => "vmclone.xsd",
+                default => "sampledata/vmclone.xsd",
         },
 );
 
 Opts::add_options(%opts);
 Opts::parse();
-Opts::validate();
+Opts::validate(\&validate);
 
 my $vmname = Opts::get_option('vmname');
 
 sub deploy_template() {
-        my ($vmtemplate, $datastore, $resourcepool, $cpus, $folder, $comp_res_view, $vm_views);
+        my ($vmtemplate, $datastore, $resourcepool, $cpus, $folder, $comp_res_view, $vm_views, $vmhost);
 
-        if (Opts::get_option('vcenter')) { $vcenter = Opts::get_option('vcenter'); }
-        if (Opts::get_option('pass')) { $pass = Opts::get_option('pass'); }
-        if (Opts::get_option('user')) { $user = Opts::get_option('user'); }
         if (Opts::get_option('datastore')) { $datastore = Opts::get_option('datastore'); }
         if (Opts::get_option('vmtemplate')) { $vmtemplate = Opts::get_option('vmtemplate'); }
         if (Opts::get_option('vmhost')) { $vmhost = Opts::get_option('vmhost'); }
         if (Opts::get_option('cpus')) { $cpus = Opts::get_option('cpus'); }
-
-        my $url = Opts::set_option ('url',"https://$vcenter/sdk/webService");
 
         $vm_views = Vim::find_entity_views( view_type => 'VirtualMachine', filter => { 'name' => $vmtemplate } );
 
@@ -130,7 +131,7 @@ sub deploy_template() {
 
                         my $relocate_spec = get_relocate_spec(%relocate_params);
                         my $config_spec = get_config_spec();
-                        my $customization_spec = VMUtils::get_customization_spec(Opts::get_option('filename'));;
+                        my $customization_spec = VMUtils::get_customization_spec(Opts::get_option('xml_file'));;
 
                         my $clone_spec = VirtualMachineCloneSpec->new( powerOn => 1, template => 0, location => $relocate_spec, config => $config_spec, customization => $customization_spec );
 
@@ -149,10 +150,6 @@ sub deploy_template() {
                                               spec => $clone_spec );
                                 Util::trace (0, $vmname . " (template " . $vmtemplate . ") successfully deployed.\n");
                         };
-
-                        print "aaaa\n";
-                        print $@->detail;
-                        print "aaaa\n";
 
                         if ($@) {
                            if (ref($@) eq 'SoapFault') {
@@ -273,6 +270,18 @@ sub get_datastore {
 
         return ( name => $name, mor => $mor );
 }
+
+sub validate {
+  my $valid= 1;
+
+  $valid = XMLValidation::validate_format(Opts::get_option('xml_file'));
+  if ($valid == 1) {
+  $valid = XMLValidation::validate_schema(Opts::get_option('xml_file'),
+                                       Opts::get_option('xml_schema'));
+  }
+  return $valid;
+}
+
 
 Util::connect();
 
