@@ -197,7 +197,7 @@ sub deploy_template() {
                            }
                            else {
                               print ref($@);
-#                              Util::trace (0, "Fault" . $@ . ""   );
+                              Util::trace (0, "Fault" . $@ . ""   );
                            }
                         }
                       }
